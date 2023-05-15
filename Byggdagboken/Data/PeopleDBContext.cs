@@ -40,6 +40,8 @@ public partial class PeopleDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=localhost, 1433;Database=People;User Id=sa;Password=Byggdagboken2023;TrustServerCertificate=True;");
+        optionsBuilder.UseSqlServer("Server=localhost, 1433;Database=People;User Id=sa;Password=Byggdagboken2023;TrustServerCertificate = True;");
     }
+    // Connection string used for the DB in Docker container (triggering error):
+    // "Data Source=byggdagbokenappdb; Initial Catalog=Byggdagboken; User ID=sa; Password=;Byggdagboken2023!;trustServerCertificate=True;"
 }

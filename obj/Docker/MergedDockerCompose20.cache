@@ -1,0 +1,59 @@
+name: dockercompose14020514692623640394
+services:
+  byggdagboken:
+    build:
+      context: C:\Users\guibe\salt_projects\Byggdagboken.Net
+      dockerfile: Byggdagboken\Dockerfile
+    container_name: byggdagboken-app
+    depends_on:
+      byggdagbokenappdb:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:443;http://+:80
+      DB_HOST: byggdagbokenappdb
+      DB_MSSQL_SA_PASSWORD: Byggdagboken2023
+      DB_NAME: Byggdagboken
+    image: byggdagboken
+    networks:
+      byggapp: null
+    ports:
+    - mode: ingress
+      target: 80
+      protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8001"
+      protocol: tcp
+    - mode: ingress
+      target: 443
+      protocol: tcp
+    volumes:
+    - type: bind
+      source: C:\Users\guibe\AppData\Roaming/Microsoft/UserSecrets
+      target: /root/.microsoft/usersecrets
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\guibe\AppData\Roaming/ASP.NET/Https
+      target: /root/.aspnet/https
+      read_only: true
+      bind:
+        create_host_path: true
+  byggdagbokenappdb:
+    container_name: app-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Byggdagboken2023
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      byggapp: null
+    ports:
+    - mode: ingress
+      target: 1433
+      published: "8002"
+      protocol: tcp
+networks:
+  byggapp:
+    name: dockercompose14020514692623640394_byggapp

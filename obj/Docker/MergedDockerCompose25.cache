@@ -1,0 +1,99 @@
+name: dockercompose14020514692623640394
+services:
+  byggdagboken:
+    build:
+      context: C:\Users\guibe\salt_projects\Byggdagboken.Net
+      dockerfile: Byggdagboken\Dockerfile
+      labels:
+        com.microsoft.created-by: visual-studio
+        com.microsoft.visual-studio.project-name: Byggdagboken
+      target: base
+    container_name: byggdagboken-app
+    depends_on:
+      byggdagbokenappdb:
+        condition: service_started
+    entrypoint:
+    - tail
+    - -f
+    - /dev/null
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ASPNETCORE_URLS: http://+:80
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+      NUGET_FALLBACK_PACKAGES: /root/.nuget/fallbackpackages
+    image: byggdagboken:dev
+    labels:
+      com.microsoft.visualstudio.debuggee.arguments: ' --additionalProbingPath /root/.nuget/packages
+        --additionalProbingPath /root/.nuget/fallbackpackages  "/app/bin/Debug/net7.0/Byggdagboken.dll"'
+      com.microsoft.visualstudio.debuggee.killprogram: /bin/sh -c "if PID=$$(pidof
+        dotnet); then kill $$PID; fi"
+      com.microsoft.visualstudio.debuggee.program: dotnet
+      com.microsoft.visualstudio.debuggee.workingdirectory: /app
+    networks:
+      byggapp: null
+    ports:
+    - mode: ingress
+      target: 80
+      protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8001"
+      protocol: tcp
+    tty: true
+    volumes:
+    - type: bind
+      source: C:\Users\guibe\salt_projects\Byggdagboken.Net\Byggdagboken
+      target: /app
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\guibe\vsdbg\vs2017u5
+      target: /remote_debugger
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\guibe\AppData\Roaming/ASP.NET/Https
+      target: /root/.aspnet/https
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\guibe\AppData\Roaming/Microsoft/UserSecrets
+      target: /root/.microsoft/usersecrets
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages
+      target: /root/.nuget/fallbackpackages
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\guibe\.nuget\packages\
+      target: /root/.nuget/packages
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\guibe\salt_projects\Byggdagboken.Net
+      target: /src
+      bind:
+        create_host_path: true
+  byggdagbokenappdb:
+    container_name: app-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Byggdagboken2023
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      byggapp: null
+    ports:
+    - mode: ingress
+      target: 1433
+      published: "8002"
+      protocol: tcp
+networks:
+  byggapp:
+    name: dockercompose14020514692623640394_byggapp

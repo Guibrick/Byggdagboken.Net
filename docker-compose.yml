@@ -1,0 +1,28 @@
+version: '3.4'
+
+networks:
+  byggapp:
+
+services:
+  byggdagbokenappdb:
+    container_name: app-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+        - 8002:1433
+    environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=Byggdagboken2023
+    networks:
+        - byggapp
+  byggdagboken:
+    container_name: byggdagboken-app
+    image: ${DOCKER_REGISTRY-}byggdagboken
+    build:
+      context: .
+      dockerfile: Byggdagboken\Dockerfile
+    ports:
+        - 8001:80
+    depends_on: 
+        - byggdagbokenappdb
+    networks:
+        - byggapp
